@@ -62,7 +62,7 @@ jobs:
 
     # Optional: Terraform step if backend provisioning is part of this repo
     - name: Terraform Init & Apply
-      working-directory: ./infrastructure
+      working-directory: ./ZINTER.NL
       run: |
         terraform init
         terraform apply -auto-approve

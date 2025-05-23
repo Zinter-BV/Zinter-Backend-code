@@ -1,3 +1,4 @@
+update this then
 name: Deploy Backend to AKS
 
 on:
@@ -7,7 +8,6 @@ on:
 
 env:
   IMAGE_NAME: backend
-  TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}
 
 jobs:
   build-and-deploy:
@@ -23,7 +23,7 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build and push Docker image
+    - name: Build and push image
       run: |
         docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest .
         docker push ${{ secrets.DOCKER_USERNAME }}/${{ env.IMAGE_NAME }}:latest
@@ -54,17 +54,12 @@ jobs:
           --from-literal=dbConnectionString="${{ secrets.AZURE_SQL_CONNECTION_STRING }}" \
           --dry-run=client -o yaml | kubectl apply -f -
 
-    - name: Deploy backend to AKS
+    - name: Deploy backend
       run: |
         kubectl apply -f k8s/deployment.yaml
         kubectl apply -f k8s/service.yaml
         kubectl apply -f k8s/ingress.yaml
 
-    # Optional: Terraform step if backend provisioning is part of this repo
-    - name: Terraform Init & Apply
-      working-directory: ./ZINTER.NL
-      run: |
-        terraform init
-        terraform apply -auto-approve
+
       env:
         TF_API_TOKEN: ${{ secrets.TF_API_TOKEN }}

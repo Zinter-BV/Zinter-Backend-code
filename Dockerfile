@@ -5,13 +5,15 @@ EXPOSE 80
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 
-# Copy and restore only the API project first
+# Copy csproj and restore
 COPY ["LogisticsSolution/LogisticsSolution.Api.csproj", "LogisticsSolution/"]
-WORKDIR /src/LogisticsSolution
-RUN dotnet restore "LogisticsSolution.Api.csproj"
+RUN dotnet restore "LogisticsSolution/LogisticsSolution.Api.csproj"
 
-# Copy the rest of the solution
+# Copy the rest of the project
 COPY . .
+
+# Set working directory to the project folder before publishing
+WORKDIR /src/LogisticsSolution
 RUN dotnet publish "LogisticsSolution.Api.csproj" -c Release -o /app/publish
 
 FROM base AS final

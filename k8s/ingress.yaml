@@ -8,10 +8,10 @@ metadata:
 spec:
   tls:
   - hosts:
-      - api.yourdomain.com
+      - api.zinter.nl
     secretName: backend-tls
   rules:
-  - host: api.yourdomain.com
+  - host: api.zinter.nl
     http:
       paths:
       - path: /

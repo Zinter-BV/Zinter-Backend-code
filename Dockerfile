@@ -12,6 +12,7 @@ RUN dotnet restore "LogisticsSolution/LogisticsSolution.Api.csproj"
 # Copy the rest of the project
 COPY . .
 
+
 # Set working directory to the project folder before publishing
 WORKDIR /src/LogisticsSolution
 RUN dotnet publish "LogisticsSolution.Api.csproj" -c Release -o /app/publish

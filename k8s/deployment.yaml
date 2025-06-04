@@ -25,8 +25,9 @@ spec:
         - name: ConnectionStrings__DefaultConnection
           valueFrom:
             secretKeyRef:
-              name: backend-secret
-              key: dbConnectionString
+              name: sql-connection-secret
+              key: SQL_CONNECTION_STRING
+
         readinessProbe:
           httpGet:
             path: /health

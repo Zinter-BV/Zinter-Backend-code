@@ -24,9 +24,9 @@ spec:
           value: Production
         - name: ConnectionStrings__DefaultConnection
           valueFrom:
-            secretKeyRef:
-              name: sql-connection-secret
-              key: SQL_CONNECTION_STRING
+             secretKeyRef:
+              name: backend-secret
+              key: dbConnectionString
 
         readinessProbe:
           httpGet:

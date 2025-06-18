@@ -13,6 +13,13 @@ using LogisticsSolution.Application.Models; // Add this to the top
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Bind Kestrel to 0.0.0.0:80 (required for Docker + Koyeb)
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.ListenAnyIP(80);
+});
+
+
 // Add services to the container
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();

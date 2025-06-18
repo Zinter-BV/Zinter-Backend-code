@@ -1,11 +1,14 @@
-# SDK stage
+# ----------- Build Stage -------------
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
 COPY . .
-
-# Optional: Clean/restore with retry
-RUN dotnet restore "LogisticsSolution/LogisticsSolution.Api.csproj" \
-    --disable-parallel --interactive --verbosity minimal
-
+RUN dotnet restore "LogisticsSolution/LogisticsSolution.Api.csproj"
 RUN dotnet build "LogisticsSolution/LogisticsSolution.Api.csproj" -c Release -o /app/build
 RUN dotnet publish "LogisticsSolution/LogisticsSolution.Api.csproj" -c Release -o /app/publish
+
+# ----------- Runtime Stage -------------
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
+WORKDIR /app
+COPY --from=build /app/publish .
+EXPOSE 80
+ENTRYPOINT ["dotnet", "LogisticsSolution.Api.dll"]

@@ -1,7 +1,6 @@
 ﻿using LogisticsSolution.Application.Contract;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.CodeDom;
+using System.Threading.Tasks;
 
 namespace LogisticsSolution.Api.Controllers
 {
@@ -10,6 +9,7 @@ namespace LogisticsSolution.Api.Controllers
     public class MailingController : ControllerBase
     {
         private readonly IMailing _mailing;
+
         public MailingController(IMailing mailing)
         {
             _mailing = mailing;

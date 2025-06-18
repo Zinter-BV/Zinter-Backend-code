@@ -1,7 +1,7 @@
 ﻿using LogisticsSolution.Application.Contract;
 using LogisticsSolution.Application.Utility;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace LogisticsSolution.Api.Controllers
 {
@@ -10,6 +10,7 @@ namespace LogisticsSolution.Api.Controllers
     public class ProvinceController : ControllerBase
     {
         private readonly IProvince _province;
+
         public ProvinceController(IProvince province)
         {
             _province = province;
@@ -23,18 +24,17 @@ namespace LogisticsSolution.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetActiveRequests(PaginationDto request)
+        public async Task<IActionResult> GetActiveRequests([FromBody] PaginationDto request)
         {
             var result = await _province.GetProvinceRequestsByAgent(request, true);
             return Ok(result);
-
         }
+
         [HttpPost]
-        public async Task<IActionResult> GetRequestHistory(PaginationDto request)
+        public async Task<IActionResult> GetRequestHistory([FromBody] PaginationDto request)
         {
             var result = await _province.GetProvinceRequestsByAgent(request, false);
             return Ok(result);
-
         }
     }
 }

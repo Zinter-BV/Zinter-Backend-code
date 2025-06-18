@@ -2,6 +2,9 @@
 using LogisticsSolution.Application.Dtos.Request;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks; // ✅ Required for Task<>
+using System; // Optional but useful
+using System.Collections.Generic; // If you return or use List<T> in the future
 
 namespace LogisticsSolution.Api.Controllers
 {
@@ -10,13 +13,13 @@ namespace LogisticsSolution.Api.Controllers
     public class AgentController : ControllerBase
     {
         private readonly IAgent _agent;
+
         public AgentController(IAgent agent)
         {
             _agent = agent;
         }
 
         [HttpPost]
-
         public async Task<IActionResult> GetVerificationCode(EmailVerificationDto request)
         {
             var result = await _agent.SendEmailVerificationCode(request);

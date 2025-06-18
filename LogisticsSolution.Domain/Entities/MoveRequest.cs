@@ -1,4 +1,8 @@
-﻿using LogisticsSolution.Domain.Enums;
+﻿using System;
+using System.Collections.Generic;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+using LogisticsSolution.Domain.Enums;
 
 namespace LogisticsSolution.Domain.Entities
 {

@@ -22,7 +22,7 @@ namespace LogisticsSolution.Infrastructure
             };
         }
 
-        public async Task<TResponse?> SendRequestAsync<TResponse>(string url, HttpMethod method, object body = null)
+        public async Task<TResponse> SendRequestAsync<TResponse>(string url, HttpMethod method, object? body = null)
         {
             var requestMessage = new HttpRequestMessage(method, url);
 
@@ -42,7 +42,14 @@ namespace LogisticsSolution.Infrastructure
                 }
 
                 string jsonResponse = await response.Content.ReadAsStringAsync();
-                return JsonConvert.DeserializeObject<TResponse>(jsonResponse);
+                var deserialized = JsonConvert.DeserializeObject<TResponse>(jsonResponse);
+
+                if (deserialized == null)
+                {
+                    throw new InvalidOperationException("The response could not be deserialized into the expected type.");
+                }
+
+                return deserialized;
             }
             catch (HttpRequestException ex)
             {
@@ -61,6 +68,5 @@ namespace LogisticsSolution.Infrastructure
 
         public Task<TResponse> DeleteAsync<TResponse>(string url)
             => SendRequestAsync<TResponse>(url, HttpMethod.Delete);
-
     }
 }

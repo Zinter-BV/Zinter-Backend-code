@@ -2,6 +2,8 @@
 using LogisticsSolution.Application.Dtos.Request;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks; // ✅ Required for Task<>
+using System; // Optional
 
 namespace LogisticsSolution.Api.Controllers
 {
@@ -10,6 +12,7 @@ namespace LogisticsSolution.Api.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuth _auth;
+
         public AuthController(IAuth auth)
         {
             _auth = auth;
@@ -21,6 +24,5 @@ namespace LogisticsSolution.Api.Controllers
             var result = await _auth.RegisterAgent(request);
             return Ok(result);
         }
-
     }
 }

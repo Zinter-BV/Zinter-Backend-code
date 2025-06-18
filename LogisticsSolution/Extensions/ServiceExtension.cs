@@ -1,4 +1,5 @@
 ﻿global using LogisticsSolution.Infrastructure;
+using Microsoft.Extensions.DependencyInjection; // ✅ Add this
 using LogisticsSolution.Application.BusinessLogic;
 using LogisticsSolution.Application.Contract;
 using LogisticsSolution.Application.Contract.ExternalServices;
@@ -6,6 +7,7 @@ using LogisticsSolution.Application.Contract.Notification;
 using LogisticsSolution.Infrastructure.ExternalServices;
 using LogisticsSolution.Infrastructure.Notification;
 using LogisticsSolution.Infrastructure.Persistance;
+
 
 namespace LogisticsSolution.Api.Extensions
 {

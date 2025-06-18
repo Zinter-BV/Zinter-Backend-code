@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using LogisticsSolution.Infrastructure.ExternalServices;
 using LogisticsSolution.Domain.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace LogisticsSolution.Controllers
+namespace LogisticsSolution.Api.Controllers // Changed to match the convention if others are under .Api
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -23,7 +25,7 @@ namespace LogisticsSolution.Controllers
         }
 
         [HttpPost("add")]
-        public async Task<ActionResult> Add([FromBody] Delivery delivery)
+        public async Task<IActionResult> Add([FromBody] Delivery delivery)
         {
             await _mongoService.InsertAsync(delivery);
             return Ok(new { success = true });

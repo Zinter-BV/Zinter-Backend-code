@@ -1,4 +1,9 @@
-﻿namespace LogisticsSolution.Domain.Entities
+﻿using System;
+using System.Collections.Generic;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
+
+namespace LogisticsSolution.Domain.Entities
 {
     public class MovingAgent
     {
@@ -8,7 +13,7 @@
         public string KvkNumber { get; set; }
         public bool IsActive { get; set; } = false;
         public DateTime CreatedOn { get; set; }
-        public string Image {  get; set; }
+        public string Image { get; set; }
         public string CompanyOverView { get; set; }
         public byte[] PasswordSalt { get; set; }
         public byte[] PasswordHash { get; set; }

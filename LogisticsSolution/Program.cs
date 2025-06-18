@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Hosting;
 using LogisticsSolution.Application.Models; // Add this to the top
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +18,6 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     serverOptions.ListenAnyIP(80);
 });
-
 
 // Add services to the container
 builder.Services.AddControllers();
@@ -34,9 +33,9 @@ builder.Services.AddCors(options =>
               .AllowAnyOrigin());
 });
 
-// MongoDB Config (Make sure you have MongoDbSettings and MongoDbService<T>)
+// MongoDB Config
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDbSettings"));
-builder.Services.AddSingleton<MongoDbService<EmailLog>>(); // Replace 'YourModel' with actual data model
+builder.Services.AddSingleton<MongoDbService<EmailLog>>();
 
 // AppSettings binding
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
@@ -63,6 +62,8 @@ if (app.Environment.IsDevelopment())
 // Map endpoints
 app.MapControllers();
 app.MapGet("/health", () => Results.Ok("Healthy"));
+app.MapGet("/", () => Results.Ok("Zinter API is live 🚀")); // 👈 Add this
 app.MapHub<NotificationHub>("/notification");
 
 app.Run();
+

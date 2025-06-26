@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\LogisticsSolution.Application\LogisticsSolution.Application.csproj" />
+    <ProjectReference Include="..\..\LogisticsSolution.Domain\LogisticsSolution.Domain.csproj" />
+    <ProjectReference Include="..\..\LogisticsSolution.Infrastructure\LogisticsSolution.Infrastructure.csproj" />
+    <ProjectReference Include="..\LogisticsSolution.Persistence\LogisticsSolution.Persistence.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,7 +1,11 @@
-﻿using LogisticsSolution.Application.Contract;
+﻿using Azure;
+using LogisticsSolution.Application.Constant;
+using LogisticsSolution.Application.Contract;
+using LogisticsSolution.Application.Dtos.Response;
 using LogisticsSolution.Application.Utility;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace LogisticsSolution.Api.Controllers
 {
@@ -10,13 +14,13 @@ namespace LogisticsSolution.Api.Controllers
     public class ProvinceController : ControllerBase
     {
         private readonly IProvince _province;
-
         public ProvinceController(IProvince province)
         {
             _province = province;
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(ResponseModel<List<ProvinceResponseModel>>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetProvinces()
         {
             var result = await _province.GetAllProvinces();
@@ -24,17 +28,20 @@ namespace LogisticsSolution.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetActiveRequests([FromBody] PaginationDto request)
+        [ProducesResponseType(typeof(ResponseModel<Paged<PendingMoveRequestResponseModel>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetActiveRequests(PaginationDto request)
         {
             var result = await _province.GetProvinceRequestsByAgent(request, true);
             return Ok(result);
-        }
 
-        [HttpPost]
-        public async Task<IActionResult> GetRequestHistory([FromBody] PaginationDto request)
+        }
+        [HttpGet]
+        [ProducesResponseType(typeof(ResponseModel<Paged<PendingMoveRequestResponseModel>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetRequestHistory([FromQuery]PaginationDto request)
         {
             var result = await _province.GetProvinceRequestsByAgent(request, false);
             return Ok(result);
+
         }
     }
 }

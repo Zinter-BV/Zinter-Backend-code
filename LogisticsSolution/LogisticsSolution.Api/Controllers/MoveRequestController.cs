@@ -1,9 +1,9 @@
-﻿using LogisticsSolution.Application.Contract;
+﻿using LogisticsSolution.Application.Constant;
+using LogisticsSolution.Application.Contract;
 using LogisticsSolution.Application.Dtos.Request;
+using LogisticsSolution.Application.Dtos.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace LogisticsSolution.Api.Controllers
 {
@@ -12,28 +12,30 @@ namespace LogisticsSolution.Api.Controllers
     public class MoveRequestController : ControllerBase
     {
         private readonly IMove _move;
-
         public MoveRequestController(IMove move)
         {
             _move = move;
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetQuote([FromBody] MoveRequestDto request)
+        [ProducesResponseType(typeof(ResponseModel<string>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetQuote(MoveRequestDto request)
         {
             var result = await _move.CreateRequest(request);
             return Ok(result);
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetMoveDetails([FromQuery] string code)
+        [ProducesResponseType(typeof(ResponseModel<MoveDetailsResponseModel>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetMoveDetails(string code)
         {
             var result = await _move.GetDetailsByCode(code);
             return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> GetItemsByImage([FromForm] List<IFormFile> images)
+        [ProducesResponseType(typeof(ResponseModel<List<AnalysedImageResponseModel>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetItemsByImage(List<IFormFile> images)
         {
             var result = await _move.GetItemsByImage(images);
             return Ok(result);

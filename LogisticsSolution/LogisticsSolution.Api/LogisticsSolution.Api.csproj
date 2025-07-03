@@ -7,10 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\LogisticsSolution.Application\LogisticsSolution.Application.csproj" />
-    <ProjectReference Include="..\..\LogisticsSolution.Domain\LogisticsSolution.Domain.csproj" />
+	  <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.10" />
+	  <PackageReference Include="Microsoft.AspNetCore.SignalR.Common" Version="8.0.10" />
+	  <PackageReference Include="NLog" Version="5.3.4" />
+	  <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.14" />
+	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.11" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="8.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\LogisticsSolution.Infrastructure\LogisticsSolution.Infrastructure.csproj" />
-    <ProjectReference Include="..\LogisticsSolution.Persistence\LogisticsSolution.Persistence.csproj" />
   </ItemGroup>
 
 </Project>

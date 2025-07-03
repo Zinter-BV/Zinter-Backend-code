@@ -1,7 +1,8 @@
-﻿using LogisticsSolution.Application.Contract;
+﻿using LogisticsSolution.Application.Constant;
+using LogisticsSolution.Application.Contract;
 using LogisticsSolution.Application.Dtos.Request;
+using LogisticsSolution.Application.Dtos.Response;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace LogisticsSolution.Api.Controllers
 {
@@ -10,28 +11,30 @@ namespace LogisticsSolution.Api.Controllers
     public class QuoteController : ControllerBase
     {
         private readonly IQuote _quote;
-
         public QuoteController(IQuote quote)
         {
             _quote = quote;
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateQuote([FromBody] CreateQuoteDto request)
+        [ProducesResponseType(typeof(ResponseModel<string>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> CreateQuote(CreateQuoteDto request)
         {
             var result = await _quote.CreateQuote(request);
             return Ok(result);
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetQuoteDetails([FromQuery] long id)
+        [ProducesResponseType(typeof(ResponseModel<QuoteSummaryResponseModel>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetQuoteDetails(long id)
         {
             var result = await _quote.GetQuoteDetails(id);
             return Ok(result);
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllQuotes([FromQuery] string code)
+        [ProducesResponseType(typeof(ResponseModel<List<QuoteSummaryResponseModel>>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetAllQuotes(string code)
         {
             var result = await _quote.GetQuotesByMoveCode(code);
             return Ok(result);

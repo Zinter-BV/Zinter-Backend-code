@@ -1,11 +1,9 @@
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Design;
-using Microsoft.Extensions.Configuration;
 using System.IO;
 
 namespace LogisticsSolution.Persistence
 {
-    public class DesignTimeAppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
+/*    public class DesignTimeAppDbContextFactory : IDesignTimeDbContextFactory<AppDbContext>
     {
         public AppDbContext CreateDbContext(string[] args)
         {
@@ -19,5 +17,5 @@ namespace LogisticsSolution.Persistence
 
             return new AppDbContext(optionsBuilder.Options);
         }
-    }
+    }*/
 }

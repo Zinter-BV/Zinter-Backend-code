@@ -1,6 +1,8 @@
-﻿using LogisticsSolution.Application.Contract;
+﻿using LogisticsSolution.Application.Constant;
+using LogisticsSolution.Application.Contract;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
+using System.CodeDom;
 
 namespace LogisticsSolution.Api.Controllers
 {
@@ -9,13 +11,13 @@ namespace LogisticsSolution.Api.Controllers
     public class MailingController : ControllerBase
     {
         private readonly IMailing _mailing;
-
         public MailingController(IMailing mailing)
         {
             _mailing = mailing;
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(ResponseModel<string>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Add(string email)
         {
             var result = await _mailing.AddEmail(email);
@@ -23,6 +25,7 @@ namespace LogisticsSolution.Api.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(typeof(ResponseModel<List<string>>), StatusCodes.Status200OK)]
         public async Task<IActionResult> Get()
         {
             var result = await _mailing.GetAllEmails();

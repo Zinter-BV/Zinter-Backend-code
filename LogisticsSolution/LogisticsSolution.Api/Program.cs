@@ -35,11 +35,8 @@ try
         });
     });
 
-
     // Add services to the container.
-
     builder.Services.AddControllers();
-    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(options =>
     {
@@ -52,57 +49,52 @@ try
         });
         options.OperationFilter<SecurityRequirementsOperationFilter>();
     });
-    /*   builder.Services.AddDbContext<DataContext>(options =>
-       {
-           options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-       });*/
 
     builder.Services.AddDbContext<DataContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
-
-
+        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-.AddJwtBearer(options =>
-{
-    options.IncludeErrorDetails = true;
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
-        ValidateIssuer = false,
-        ValidateAudience = false,
-        RequireExpirationTime = true, // test........
-        ValidateLifetime = true,
-    };
+        .AddJwtBearer(options =>
+        {
+            options.IncludeErrorDetails = true;
+            options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("AppSettings:Token").Value)),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                RequireExpirationTime = true,
+                ValidateLifetime = true,
+            };
+        });
 
-});
-
-    //// #################################   Register Repository ############################# ////
+    // Register Repository and Services
     builder.Services.AddHttpContextAccessor();
     builder.Services.InjectRepository();
     builder.Services.InjectService();
 
     builder.Logging.ClearProviders();
-
     builder.Host.UseNLog();
     builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+
+    // ⚠️ Configure Kestrel to listen on platform-provided PORT or fallback to 8080
+    var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+    builder.WebHost.ConfigureKestrel(options =>
+    {
+        options.ListenAnyIP(int.Parse(port));
+    });
+
     var app = builder.Build();
 
-    // Configure the HTTP request pipeline.
+    // Configure the HTTP request pipeline
     if (app.Environment.IsDevelopment())
     {
-        
+        // No dev-specific middleware added
     }
+
     app.UseSwagger();
     app.UseSwaggerUI();
 
-/*    using (var scope = app.Services.CreateScope())
-    {
-        var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
-        dbContext.Database.Migrate();
-    }
-*/
     app.UseRouting();
 
     app.UseCors("SignalRPolicy");
@@ -110,10 +102,12 @@ try
     app.UseHttpsRedirection();
 
     app.UseAuthentication();
-
     app.UseAuthorization();
 
     app.MapControllers();
+
+    // ✅ Health check route for Koyeb or similar platforms
+    app.MapGet("/", () => "API is healthy");
 
     app.UseEndpoints(endpoints =>
     {
@@ -125,7 +119,7 @@ try
 catch (Exception ex)
 {
     logger.Error(ex);
-    throw (ex);
+    throw;
 }
 finally
 {

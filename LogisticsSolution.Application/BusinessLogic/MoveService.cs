@@ -68,6 +68,7 @@ namespace LogisticsSolution.Application.BusinessLogic
                     PickUpTime = request.PickUpTime,
                     NumberOfFloors = request.NumberOfFloors,
                     LongCarry = request.LongCarry ?? null,
+                    Remark = request.Remark,
                     MoveCode = ExtensionMethods.GenerateMovingCode(),
                     HasElevator = request.HasElevator,
                     NeedShuttle = request.NeedShuttle,

@@ -40,5 +40,12 @@ namespace LogisticsSolution.Api.Controllers
             var result = await _agent.VerifyCode(email, code);
             return Ok(result);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> DashBoardAnalytics()
+        {
+            var result = await _agent.GetDashBoardStatistics();
+            return Ok(result);
+        }
     }
 }

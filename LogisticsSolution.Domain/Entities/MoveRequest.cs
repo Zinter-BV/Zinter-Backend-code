@@ -19,6 +19,7 @@ namespace LogisticsSolution.Domain.Entities
         public DateTime PickUpTime { get; set; }
         public int NumberOfFloors { get; set; }
         public string? LongCarry { get; set; }
+        public string? Remark { get; set; }
         public string PickUpLongitude { get; set; }
         public string PickUpLatitude { get; set; }
         public string DropOffLongitude { get; set; }

@@ -43,6 +43,7 @@ namespace LogisticsSolution.Infrastructure.Data
             moveRequestEntity.Property(x => x.MoveCode).HasMaxLength(7);
             moveRequestEntity.HasIndex(x => x.MoveCode).IsUnique();
             moveRequestEntity.Property(x => x.Email).HasMaxLength(150);
+            moveRequestEntity.Property(x => x.Remark).HasMaxLength(300);
             moveRequestEntity.Property(x => x.PickUpAddress).HasMaxLength(250);
             moveRequestEntity.Property(x => x.DropOffAddress).HasMaxLength(250);
             moveRequestEntity.Property(x => x.LongCarry).HasMaxLength(50);

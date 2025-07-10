@@ -16,6 +16,7 @@
         public DateTime PickUpTime { get; set; }
         public int NumberOfFloors { get; set; }
         public string? LongCarry { get; set; }
+        public string? Remark { get; set; }
         public bool HasElevator { get; set; }
         public bool NeedShuttle { get; set; }
         public bool HasBuildingInsurance { get; set; }

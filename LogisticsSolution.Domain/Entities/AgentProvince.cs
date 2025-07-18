@@ -15,7 +15,7 @@ namespace LogisticsSolution.Domain.Entities
         public AgentProvince()
         {
             this.IsActive = true;
-            this.CreatedOn = DateTime.Now;
+            this.CreatedOn = DateTime.UtcNow;
         }
     }
 }

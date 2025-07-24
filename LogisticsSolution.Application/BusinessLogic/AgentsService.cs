@@ -133,9 +133,11 @@ namespace LogisticsSolution.Application.BusinessLogic
             try
             {
                 //modify
-                int userId = 1;
+            
 
                 var all = await _unitOfWork.GetRepository<MovingAgent>().FindAllAsync();
+                int userId = all.FirstOrDefault().Id;
+
 
                 var movingAgent = await _unitOfWork.GetRepository<MovingAgent>().FindSingleWithRelatedEntitiesAsync(x => x.Id == userId && !x.IsActive,
                                                                                                                     x => x.ProvincesCovered);
@@ -149,10 +151,10 @@ namespace LogisticsSolution.Application.BusinessLogic
 
                 var response = new AgentDashBoardAnalyticsResponseModel
                 {
-                    Incoming = await moveRequestRepository.CountAsync(x => provincesCovered.Contains(x.ProvinceId) && x.MoveStatus == MoveStatusEnum.Pending && x.MoveTime < DateTime.Now),
+                    Incoming = await moveRequestRepository.CountAsync(x => provincesCovered.Contains(x.ProvinceId) && x.MoveStatus == MoveStatusEnum.Pending && x.MoveTime < DateTime.UtcNow),
                     ApprovedRequest = await moveHistoryRepository.CountAsync(x => x.MoveAgentId == userId && x.MoveStatus != MoveStatusEnum.Cancelled),
                     PaymentMade = await moveHistoryRepository.CountAsync(x => x.MoveAgentId == userId && x.MoveStatus == MoveStatusEnum.PaymentsMade),
-                    Upcoming = await moveHistoryRepository.CountAsync(x => x.MoveAgentId == userId && x.MoveStatus == MoveStatusEnum.Approved && x.ScheduledTime < DateTime.Now),
+                    Upcoming = await moveHistoryRepository.CountAsync(x => x.MoveAgentId == userId && x.MoveStatus == MoveStatusEnum.Approved && x.ScheduledTime < DateTime.UtcNow),
                     InTransit = await moveHistoryRepository.CountAsync(x => x.MoveAgentId == userId && x.MoveStatus == MoveStatusEnum.InProgress),
                     Completed = await moveHistoryRepository.CountAsync(x => x.MoveAgentId == userId && x.MoveStatus == MoveStatusEnum.Completed),
                     Cancelled = await moveHistoryRepository.CountAsync(x => x.MoveAgentId == userId && x.MoveStatus == MoveStatusEnum.Cancelled),

@@ -132,12 +132,12 @@ namespace LogisticsSolution.Application.BusinessLogic
         {
             try
             {
-              
+                //modify
+            
 
                 var all = await _unitOfWork.GetRepository<MovingAgent>().FindAllAsync();
-
-                //modify
                 int userId = all.FirstOrDefault().Id;
+
 
                 var movingAgent = await _unitOfWork.GetRepository<MovingAgent>().FindSingleWithRelatedEntitiesAsync(x => x.Id == userId && !x.IsActive,
                                                                                                                     x => x.ProvincesCovered);

@@ -23,9 +23,10 @@ namespace LogisticsSolution.Application.BusinessLogic
             {
                 //modify
 
-                int user = 1;
+                var all = await _unitOfWork.GetRepository<MovingAgent>().FindAllAsync();
+                int user = all.FirstOrDefault().Id;
 
-                var moveRequest = await _unitOfWork.GetRepository<MoveRequest>().FindSingleWithRelatedEntitiesAsync(x => x.Id == request.MoveId && x.MoveTime < DateTime.Now);
+                var moveRequest = await _unitOfWork.GetRepository<MoveRequest>().FindSingleWithRelatedEntitiesAsync(x => x.Id == request.MoveId && x.MoveTime < DateTime.UtcNow);
 
                 if (moveRequest == null)
                     "Invalid move request".FailResponse<string>();

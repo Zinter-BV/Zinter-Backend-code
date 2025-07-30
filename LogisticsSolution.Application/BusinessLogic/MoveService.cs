@@ -114,19 +114,38 @@ namespace LogisticsSolution.Application.BusinessLogic
             }
         }
 
-        public async Task<ResponseModel<List<AnalysedImageResponseModel>>> GetItemsByImage(List<IFormFile> images)
+        public async Task<ResponseModel<List<MoveItemRequestDto>>> GetItemsByImage(List<IFormFile> images, string roomName)
         {
             try
             {
                 var result = await _analyser.GetItemsByImages(images);
+                var items = new List<MoveItemRequestDto>();
 
-                return result.SuccessfulResponse();
+                var allFoundObjects = result
+                    .Where(x => x.IsAnalysed && x.items != null)
+                    .SelectMany(x => x.items);
+
+
+
+                foreach (var objectFound in allFoundObjects)
+                {
+                    items.Add(new MoveItemRequestDto
+                    {
+                        Room = roomName,
+                        ItemName = objectFound,
+                        NumberOfItems = 1
+                    });
+
+                }
+
+
+                return items.SuccessfulResponse();
             }
             catch (Exception ex)
             {
                 _logger.LogError($"GetItemsByImage: {ex.Message}", ex);
 
-                return "unable to analyse Images".FailResponse<List<AnalysedImageResponseModel>>();
+                return "unable to analyse Images".FailResponse<List<MoveItemRequestDto>>();
             }
 
         }
@@ -156,10 +175,10 @@ namespace LogisticsSolution.Application.BusinessLogic
                 moveDetailsResponse.FullName = moveDetails.FullName;
                 moveDetailsResponse.Email = moveDetails.Email;
                 moveDetailsResponse.PhoneNumber = moveDetails.PhoneNumber;
-                moveDetailsResponse.MoveDate = moveDetails.MoveTime;
-                moveDetailsResponse.MoveDay = moveDetails.MoveTime.DayOfWeek.ToString();
+                moveDetailsResponse.MoveDate = moveDetails.PickUpTime;
+                moveDetailsResponse.MoveDay = moveDetails.PickUpTime.DayOfWeek.ToString();
                 moveDetailsResponse.Status = moveDetails.MoveStatus.ToString(); 
-                moveDetailsResponse.MoveTime = moveDetails.MoveTime.ToString("HH:mm");
+                moveDetailsResponse.MoveTime = moveDetails.PickUpTime.ToString("HH:mm");
                 moveDetailsResponse.NumberOfRooms = moveItems.Count;
                 moveDetailsResponse.From = moveDetails.PickUpAddress;
                 moveDetailsResponse.PickUpLatitude = moveDetails.PickUpLatitude;

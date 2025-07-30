@@ -10,10 +10,12 @@ namespace LogisticsSolution.Application.BusinessLogic
     {
         private readonly ILogger<QuoteService> _logger;
         private readonly IUnitOfWork _unitOfWork;
-        public QuoteService(ILogger<QuoteService> logger, IUnitOfWork unitOfWork)
+        private readonly IMove _move;
+        public QuoteService(ILogger<QuoteService> logger, IUnitOfWork unitOfWork, IMove move)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
+            _move = move;
         }
 
         //create quote
@@ -62,10 +64,12 @@ namespace LogisticsSolution.Application.BusinessLogic
             try
             {
 
-                var quote = await _unitOfWork.GetRepository<Quote>().FindSingleWithRelatedEntitiesAsync(x => x.Id == id, x => x.MovingAgent);
+                var quote = await _unitOfWork.GetRepository<Quote>().FindSingleWithRelatedEntitiesAsync(x => x.Id == id, x => x.MovingAgent, x => x.MoveRequest);
 
                 if (quote == null)
                     return "quote details not found".FailResponse<QuoteSummaryResponseModel>();
+
+                var quoteDetails = await _move.GetDetailsByCode(quote.MoveRequest.MoveCode);
 
                 var response = new QuoteSummaryResponseModel
                 {
@@ -75,6 +79,8 @@ namespace LogisticsSolution.Application.BusinessLogic
                     CompanyEmail = quote.MovingAgent.Email,
                     CompanyName = quote.MovingAgent.CompanyName,
                     ProposedTime = quote.ProposedTime,
+                    Image = quote.MovingAgent.Image,
+                    MoveDetails = !quoteDetails.ResponseStatus ? new MoveDetailsResponseModel() : quoteDetails.Result
                 };
 
                 return response.SuccessfulResponse();

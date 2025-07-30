@@ -87,7 +87,7 @@ namespace LogisticsSolution.Application.BusinessLogic
             {
                 List<PendingMoveRequestResponseModel> pendingMoves = new List<PendingMoveRequestResponseModel>();
 
-                var pendingRequestsQuery = isActive ? _unitOfWork.GetRepository<MoveRequest>().FindQueryableWithRelatedEntities(predicate: x => ids.Contains(x.ProvinceId) && x.MoveTime < DateTime.Now, x => x.Province) :
+                var pendingRequestsQuery = isActive ? _unitOfWork.GetRepository<MoveRequest>().FindQueryableWithRelatedEntities(predicate: x => ids.Contains(x.ProvinceId) && x.MoveTime < DateTime.UtcNow, x => x.Province) :
                                                       _unitOfWork.GetRepository<MoveRequest>().FindQueryableWithRelatedEntities(predicate: x => ids.Contains(x.ProvinceId), x => x.Province);
 
                 var paginatedPendingRequests = Paged<PendingMoveRequestResponseModel>.PaginatedList(pendingMoves, pendingRequestsQuery.Count(), pagination.PageNumber, pagination.NumberOfRecords);

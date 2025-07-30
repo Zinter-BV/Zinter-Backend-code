@@ -35,9 +35,9 @@ namespace LogisticsSolution.Api.Controllers
 
         [HttpPost]
         [ProducesResponseType(typeof(ResponseModel<List<AnalysedImageResponseModel>>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetItemsByImage(List<IFormFile> images)
+        public async Task<IActionResult> GetItemsByImage([FromQuery]string room,List<IFormFile> images)
         {
-            var result = await _move.GetItemsByImage(images);
+            var result = await _move.GetItemsByImage(images,room);
             return Ok(result);
         }
     }

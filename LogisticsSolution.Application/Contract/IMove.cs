@@ -8,6 +8,6 @@ namespace LogisticsSolution.Application.Contract
     {
         Task<ResponseModel<string>> CreateRequest(MoveRequestDto request);
         Task<ResponseModel<MoveDetailsResponseModel>> GetDetailsByCode(string code);
-        Task<ResponseModel<List<AnalysedImageResponseModel>>> GetItemsByImage(List<IFormFile> images);
+        Task<ResponseModel<List<MoveItemRequestDto>>> GetItemsByImage(List<IFormFile> images, string roomName);
     }
 }

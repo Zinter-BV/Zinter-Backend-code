@@ -8,6 +8,8 @@
         public string CompanyEmail { get; set; }
         public string? AdditionalInformation { get; set; }
         public decimal Amount { get; set; }
+        public string Image {  get; set; }
+        public MoveDetailsResponseModel MoveDetails { get; set; } = new MoveDetailsResponseModel();
 
     }
 }

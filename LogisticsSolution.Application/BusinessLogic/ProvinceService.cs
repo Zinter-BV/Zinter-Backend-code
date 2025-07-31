@@ -2,9 +2,11 @@
 global using LogisticsSolution.Application.Contract.ExternalServices;
 global using Microsoft.Extensions.Logging;
 using LogisticsSolution.Application.Contract;
+using LogisticsSolution.Application.Dtos;
 using LogisticsSolution.Application.Dtos.Response;
 using LogisticsSolution.Application.Utility;
 using LogisticsSolution.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 
 namespace LogisticsSolution.Application.BusinessLogic
 {
@@ -13,11 +15,13 @@ namespace LogisticsSolution.Application.BusinessLogic
         private readonly ILogger<ProvinceService> _logger;
         private readonly ICache _cache;
         private readonly IUnitOfWork _unitOfWork;
-        public ProvinceService(ILogger<ProvinceService> logger, ICache cache, IUnitOfWork unitOfWork)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public ProvinceService(ILogger<ProvinceService> logger, ICache cache, IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
             _cache = cache;
             _unitOfWork = unitOfWork;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ResponseModel<List<ProvinceResponseModel>>> GetAllProvinces()
@@ -56,9 +60,15 @@ namespace LogisticsSolution.Application.BusinessLogic
         {
             try
             {
+                HttpContextContent? jwtClaims = _httpContextAccessor.GetHttpContextValues();
 
-                var all = await _unitOfWork.GetRepository<MovingAgent>().FindAllAsync();
-                int userId = all.FirstOrDefault().Id;
+                if (jwtClaims == null || jwtClaims.role == Domain.Enums.RoleEnum.MovingAgent)
+                {
+                    return null;
+                }
+
+
+                int userId = jwtClaims.userId;
 
                 var movingAgent = await _unitOfWork.GetRepository<MovingAgent>().FindSingleWithRelatedEntitiesAsync(x => x.Id == userId && !x.IsActive,
                                                                                                                     x => x.ProvincesCovered);
@@ -76,8 +86,8 @@ namespace LogisticsSolution.Application.BusinessLogic
             }
             catch (Exception ex)
             {
-
-                throw;
+                _logger.LogError(ex, "An error occurred ::: GetProvinceRequestsByAgent");
+                return "Unable to get request".FailResponse<Paged<PendingMoveRequestResponseModel>>();
             }
         }
 

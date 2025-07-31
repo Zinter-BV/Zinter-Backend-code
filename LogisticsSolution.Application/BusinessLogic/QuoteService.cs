@@ -1,8 +1,10 @@
 ﻿using LogisticsSolution.Application.Contract;
+using LogisticsSolution.Application.Dtos;
 using LogisticsSolution.Application.Dtos.Request;
 using LogisticsSolution.Application.Dtos.Response;
 using LogisticsSolution.Application.Utility;
 using LogisticsSolution.Domain.Entities;
+using Microsoft.AspNetCore.Http;
 
 namespace LogisticsSolution.Application.BusinessLogic
 {
@@ -11,11 +13,13 @@ namespace LogisticsSolution.Application.BusinessLogic
         private readonly ILogger<QuoteService> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMove _move;
-        public QuoteService(ILogger<QuoteService> logger, IUnitOfWork unitOfWork, IMove move)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public QuoteService(ILogger<QuoteService> logger, IUnitOfWork unitOfWork, IMove move, IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _move = move;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         //create quote
@@ -23,10 +27,15 @@ namespace LogisticsSolution.Application.BusinessLogic
         {
             try
             {
-                //modify
+                HttpContextContent? jwtClaims = _httpContextAccessor.GetHttpContextValues();
 
-                var all = await _unitOfWork.GetRepository<MovingAgent>().FindAllAsync();
-                int user = all.FirstOrDefault().Id;
+                if (jwtClaims == null || jwtClaims.role == Domain.Enums.RoleEnum.MovingAgent)
+                {
+                    return null;
+                }
+
+
+                int userId = jwtClaims.userId;
 
                 var moveRequest = await _unitOfWork.GetRepository<MoveRequest>().FindSingleWithRelatedEntitiesAsync(x => x.Id == request.MoveId && x.MoveTime < DateTime.UtcNow);
 
@@ -35,7 +44,7 @@ namespace LogisticsSolution.Application.BusinessLogic
                 var newQuote = new Quote
                 {
                     MoveRequestId = request.MoveId,
-                    MovingAgentId = user,
+                    MovingAgentId = userId,
                     Amount = request.Amount,
                     AdditonalInformation = request.AdditonalInformation,
                     ProposedTime = request.ProposedTime,
@@ -46,7 +55,7 @@ namespace LogisticsSolution.Application.BusinessLogic
 
                 //send alert email
 
-                _logger.LogInformation("{user} created a quote for move:: {moveId}  ::: {time}", user, request.MoveId, DateTime.UtcNow);
+                _logger.LogInformation("{user} created a quote for move:: {moveId}  ::: {time}", userId, request.MoveId, DateTime.UtcNow);
                 return "Quote sent to customer".SuccessfulResponse();
 
 
@@ -92,7 +101,6 @@ namespace LogisticsSolution.Application.BusinessLogic
                 return "unable to retrieve details".FailResponse<QuoteSummaryResponseModel>();
             }
         }
-      
         //get quote by moveCode
         public async Task<ResponseModel<List<QuoteSummaryResponseModel>>> GetQuotesByMoveCode(string code)
         {

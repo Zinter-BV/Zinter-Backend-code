@@ -1,11 +1,9 @@
-﻿using Azure;
-using LogisticsSolution.Application.Constant;
+﻿using LogisticsSolution.Application.Constant;
 using LogisticsSolution.Application.Contract;
 using LogisticsSolution.Application.Dtos.Response;
 using LogisticsSolution.Application.Utility;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
 namespace LogisticsSolution.Api.Controllers
 {
@@ -27,7 +25,7 @@ namespace LogisticsSolution.Api.Controllers
             return Ok(result);
         }
 
-        [HttpPost]
+        [HttpPost, Authorize]
         [ProducesResponseType(typeof(ResponseModel<Paged<PendingMoveRequestResponseModel>>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetActiveRequests(PaginationDto request)
         {
@@ -35,7 +33,7 @@ namespace LogisticsSolution.Api.Controllers
             return Ok(result);
 
         }
-        [HttpGet]
+        [HttpGet, Authorize]
         [ProducesResponseType(typeof(ResponseModel<Paged<PendingMoveRequestResponseModel>>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetRequestHistory([FromQuery]PaginationDto request)
         {

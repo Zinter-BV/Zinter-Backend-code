@@ -2,6 +2,7 @@
 using LogisticsSolution.Application.Contract;
 using LogisticsSolution.Application.Dtos.Request;
 using LogisticsSolution.Application.Dtos.Response;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LogisticsSolution.Api.Controllers
@@ -16,7 +17,7 @@ namespace LogisticsSolution.Api.Controllers
             _quote = quote;
         }
 
-        [HttpPost]
+        [HttpPost, Authorize]
         [ProducesResponseType(typeof(ResponseModel<string>), StatusCodes.Status200OK)]
         public async Task<IActionResult> CreateQuote(CreateQuoteDto request)
         {

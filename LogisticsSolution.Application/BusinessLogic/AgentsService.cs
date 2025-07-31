@@ -1,10 +1,12 @@
 ﻿using LogisticsSolution.Application.Contract;
 using LogisticsSolution.Application.Contract.Notification;
+using LogisticsSolution.Application.Dtos;
 using LogisticsSolution.Application.Dtos.Request;
 using LogisticsSolution.Application.Dtos.Response;
 using LogisticsSolution.Application.Utility;
 using LogisticsSolution.Domain.Entities;
 using LogisticsSolution.Domain.Enums;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using System.Globalization;
 
@@ -18,7 +20,8 @@ namespace LogisticsSolution.Application.BusinessLogic
         private readonly ICache _cache;
         private readonly INotification _notification;
         private readonly IKvk _kvk;
-        public AgentsService(ILogger<AgentsService> logger, IOptions<AppSettings> appSettings, IUnitOfWork unitOfWork, ICache cache, INotification notification, IKvk kvk)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public AgentsService(ILogger<AgentsService> logger, IOptions<AppSettings> appSettings, IUnitOfWork unitOfWork, ICache cache, INotification notification, IKvk kvk, IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
             _appSettings = appSettings.Value;
@@ -26,6 +29,7 @@ namespace LogisticsSolution.Application.BusinessLogic
             _cache = cache;
             _notification = notification;
             _kvk = kvk;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ResponseModel<string>> SendEmailVerificationCode(EmailVerificationDto request)
@@ -91,7 +95,7 @@ namespace LogisticsSolution.Application.BusinessLogic
             }
             catch (Exception ex)
             {
-
+                _logger.LogError(ex, "An error occured");
                 return "Unable to Verify".FailResponse<bool>();
             }
         }
@@ -132,11 +136,15 @@ namespace LogisticsSolution.Application.BusinessLogic
         {
             try
             {
-                //modify
-            
+                HttpContextContent? jwtClaims = _httpContextAccessor.GetHttpContextValues();
 
-                var all = await _unitOfWork.GetRepository<MovingAgent>().FindAllAsync();
-                int userId = all.FirstOrDefault().Id;
+                if (jwtClaims == null || jwtClaims.role == Domain.Enums.RoleEnum.MovingAgent)
+                {
+                    return null;
+                }
+
+
+                int userId = jwtClaims.userId;
 
 
                 var movingAgent = await _unitOfWork.GetRepository<MovingAgent>().FindSingleWithRelatedEntitiesAsync(x => x.Id == userId && !x.IsActive,

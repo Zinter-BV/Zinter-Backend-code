@@ -1,7 +1,10 @@
 ﻿using LogisticsSolution.Application.Contract;
 using LogisticsSolution.Application.Dtos.Request;
+using LogisticsSolution.Application.Dtos.Response;
 using LogisticsSolution.Application.Utility;
 using LogisticsSolution.Domain.Entities;
+using LogisticsSolution.Domain.Enums;
+using Microsoft.Extensions.Options;
 
 namespace LogisticsSolution.Application.BusinessLogic
 {
@@ -10,11 +13,13 @@ namespace LogisticsSolution.Application.BusinessLogic
         private readonly ILogger<AuthService> _logger;
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICache _cache;
-        public AuthService(ILogger<AuthService> logger, IUnitOfWork unitOfWork, ICache cache)
+        private readonly AppSettings _appSettings;
+        public AuthService(ILogger<AuthService> logger, IUnitOfWork unitOfWork, ICache cache, IOptions<AppSettings> appSettings)
         {
             _logger = logger;
             _unitOfWork = unitOfWork;
             _cache = cache;
+            _appSettings = appSettings.Value;
         }
 
 
@@ -82,6 +87,40 @@ namespace LogisticsSolution.Application.BusinessLogic
             {
                 _logger.LogError("RegisterAgent ::: {ex}", ex);
                 return "Unable to complete registeration at this time".FailResponse<string>();
+            }
+        }
+
+        public async Task<ResponseModel<LoginResponseModel>> LoginUser(LoginDto request)
+        {
+            try
+            {
+                var user = await _unitOfWork.GetRepository<MovingAgent>().FindSingleWithRelatedEntitiesAsync(x => (x.Email.ToLower() == request.User.ToLower() || x.KvkNumber == request.User));
+                                                   
+
+                if (user == null)
+                    return "Invalid username/Password".FailResponse<LoginResponseModel>();
+
+                if (!request.Password.VerifyPassword(user.PasswordHash, user.PasswordSalt))
+                    return "Invalid username/Password".FailResponse<LoginResponseModel>();
+
+
+                _logger.LogInformation($"{request.User} successfully logged in :::::::::: {DateTime.Now}");
+
+                var response = new LoginResponseModel
+                {
+                    Name = user.CompanyName,
+                    Role = RoleEnum.MovingAgent,
+                    JwtToken = ExtensionMethods.CreateJwtToken(user.Id, (int)RoleEnum.MovingAgent, _appSettings.Token, _appSettings.TokenExpiryTime)
+                };
+
+                return response.SuccessfulResponse();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Login: {ex.Message}", ex);
+
+                return "unable to login at this time".FailResponse<LoginResponseModel>();
             }
         }
 

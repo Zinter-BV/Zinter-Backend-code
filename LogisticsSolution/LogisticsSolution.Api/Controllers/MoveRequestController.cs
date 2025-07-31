@@ -2,7 +2,6 @@
 using LogisticsSolution.Application.Contract;
 using LogisticsSolution.Application.Dtos.Request;
 using LogisticsSolution.Application.Dtos.Response;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LogisticsSolution.Api.Controllers

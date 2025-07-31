@@ -2,7 +2,7 @@
 using LogisticsSolution.Application.Contract;
 using LogisticsSolution.Application.Dtos.Request;
 using LogisticsSolution.Application.Dtos.Response;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LogisticsSolution.Api.Controllers
@@ -41,7 +41,7 @@ namespace LogisticsSolution.Api.Controllers
             return Ok(result);
         }
 
-        [HttpGet]
+        [HttpGet, Authorize]
         public async Task<IActionResult> DashBoardAnalytics()
         {
             var result = await _agent.GetDashBoardStatistics();

@@ -12,7 +12,7 @@ namespace LogisticsSolution.Domain.Entities
         public string Email { get; set; }
         public int ProvinceId { get; set; }
         public Province Province { get; set; }
-        public MoveStatusEnum MoveStatus { get; set; } = MoveStatusEnum.Pending;
+        public MoveStatusEnum MoveStatus { get; set; } = MoveStatusEnum.NewRequest;
         public string PickUpAddress { get; set; }
         public string PickUpAddressNumber { get; set; }
         public string DropOffAddressNumber { get; set; }

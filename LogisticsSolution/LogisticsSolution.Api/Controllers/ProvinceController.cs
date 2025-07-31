@@ -28,7 +28,7 @@ namespace LogisticsSolution.Api.Controllers
 
         [HttpPost, Authorize]
         [ProducesResponseType(typeof(ResponseModel<Paged<PendingMoveRequestResponseModel>>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetActiveRequests([FromQuery]MoveStatusEnum moveStatus,  PaginationDto request)
+        public async Task<IActionResult> GetActiveRequests(PaginationDto request)
         {
             var result = await _province.GetProvinceRequestsByAgent(request, true);
             return Ok(result);
@@ -36,7 +36,7 @@ namespace LogisticsSolution.Api.Controllers
         }
         [HttpGet, Authorize]
         [ProducesResponseType(typeof(ResponseModel<Paged<PendingMoveRequestResponseModel>>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetRequestHistory([FromQuery]PaginationDto request)
+        public async Task<IActionResult> GetRequestHistory([FromQuery] MoveStatusEnum moveStatus, [FromQuery]PaginationDto request)
         {
             var result = await _province.GetProvinceRequestsByAgent(request, false);
             return Ok(result);

@@ -14,6 +14,12 @@ namespace LogisticsSolution.Application.Contract.ExternalServices
         /// </summary>
         Task<T?> GetByIdAsync(string id);
 
+
+        /// <summary>
+        /// Gets an entity by long ID asynchronously.
+        /// </summary>
+        Task<T?> GetByIdAsync(long id);
+
         /// <summary>
         /// Finds a list of entities based on a predicate with optional ordering.
         /// </summary>

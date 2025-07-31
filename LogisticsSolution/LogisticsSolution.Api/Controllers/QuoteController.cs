@@ -39,6 +39,14 @@ namespace LogisticsSolution.Api.Controllers
         {
             var result = await _quote.GetQuotesByMoveCode(code);
             return Ok(result);
+        }   
+
+        [HttpGet]
+        [ProducesResponseType(typeof(ResponseModel<string>), StatusCodes.Status200OK)]
+        public async Task<IActionResult> AcceptQuote([FromQuery]long id)
+        {
+            var result = await _quote.AcceptAQuote(id);
+            return Ok(result);
         }
     }
 }

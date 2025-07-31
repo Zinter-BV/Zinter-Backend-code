@@ -23,6 +23,16 @@ namespace LogisticsSolution.Infrastructure.Persistance
         }
 
         /// <summary>
+        /// Gets an entity by long ID asynchronously.
+        /// </summary>
+        public async Task<T?> GetByIdAsync(long id)
+        {
+            return await _context.Set<T>().FindAsync(id);
+        }
+
+
+
+        /// <summary>
         /// Gets an entity by string ID asynchronously.
         /// </summary>
         public async Task<T?> GetByIdAsync(string id)

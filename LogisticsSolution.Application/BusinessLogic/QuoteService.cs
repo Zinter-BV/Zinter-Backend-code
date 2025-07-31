@@ -37,7 +37,7 @@ namespace LogisticsSolution.Application.BusinessLogic
 
                 int userId = jwtClaims.userId;
 
-                var moveRequest = await _unitOfWork.GetRepository<MoveRequest>().FindSingleWithRelatedEntitiesAsync(x => x.Id == request.MoveId && x.MoveTime < DateTime.UtcNow);
+                var moveRequest = await _unitOfWork.GetRepository<MoveRequest>().FindSingleWithRelatedEntitiesAsync(x => x.Id == request.MoveId && x.MoveTime < DateTime.UtcNow && x.MoveStatus == Domain.Enums.MoveStatusEnum.NewRequest);
 
                 if (moveRequest == null)
                     "Invalid move request".FailResponse<string>();
@@ -129,6 +129,43 @@ namespace LogisticsSolution.Application.BusinessLogic
                 _logger.LogError("GetQuotesByMoveCode ::: {ex}", ex);
                 return "Unable to retrieve quotes".FailResponse<List<QuoteSummaryResponseModel>>();
 
+            }
+        }
+
+        public async Task<ResponseModel<string>> AcceptAQuote(long id)
+        {
+            try
+            {
+                var quote = await _unitOfWork.GetRepository<Quote>().FindSingleWithRelatedEntitiesAsync(x => x.Id == id,
+                                                                                                           x => x.MoveRequest);
+
+                if (quote is null)
+                    return null;
+
+                if (quote.MoveRequest.MoveStatus != Domain.Enums.MoveStatusEnum.NewRequest)
+                    return "Offer already Accepted".FailResponse<string>();
+
+                quote.MoveRequest.MoveStatus = Domain.Enums.MoveStatusEnum.Approved;
+
+                var newMoveHistory = new MoveHistory
+                {
+                    MoveRequestId = quote.MoveRequestId,
+                    MoveAgentId = quote.MovingAgentId,
+                    Amount = quote.Amount,
+                    MoveStatus = Domain.Enums.MoveStatusEnum.Approved,
+                    ScheduledTime = quote.ProposedTime
+                };
+
+                await _unitOfWork.GetRepository<MoveHistory>().AddAsync(newMoveHistory);
+                await _unitOfWork.SaveChangesAsync();
+
+                return "Quote Accepted".SuccessfulResponse();
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred :: AcceptAQuote");
+                return "Unable to accept quote".FailResponse<string>();
             }
         }
     }

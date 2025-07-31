@@ -159,7 +159,7 @@ namespace LogisticsSolution.Application.BusinessLogic
 
                 var response = new AgentDashBoardAnalyticsResponseModel
                 {
-                    Incoming = await moveRequestRepository.CountAsync(x => provincesCovered.Contains(x.ProvinceId) && x.MoveStatus == MoveStatusEnum.Pending && x.MoveTime < DateTime.UtcNow),
+                    Incoming = await moveRequestRepository.CountAsync(x => provincesCovered.Contains(x.ProvinceId) && x.MoveStatus == MoveStatusEnum.NewRequest && x.MoveTime < DateTime.UtcNow),
                     ApprovedRequest = await moveHistoryRepository.CountAsync(x => x.MoveAgentId == userId && x.MoveStatus != MoveStatusEnum.Cancelled),
                     PaymentMade = await moveHistoryRepository.CountAsync(x => x.MoveAgentId == userId && x.MoveStatus == MoveStatusEnum.PaymentsMade),
                     Upcoming = await moveHistoryRepository.CountAsync(x => x.MoveAgentId == userId && x.MoveStatus == MoveStatusEnum.Approved && x.ScheduledTime < DateTime.UtcNow),

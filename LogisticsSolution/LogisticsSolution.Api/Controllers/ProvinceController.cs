@@ -2,6 +2,7 @@
 using LogisticsSolution.Application.Contract;
 using LogisticsSolution.Application.Dtos.Response;
 using LogisticsSolution.Application.Utility;
+using LogisticsSolution.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -27,7 +28,7 @@ namespace LogisticsSolution.Api.Controllers
 
         [HttpPost, Authorize]
         [ProducesResponseType(typeof(ResponseModel<Paged<PendingMoveRequestResponseModel>>), StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetActiveRequests(PaginationDto request)
+        public async Task<IActionResult> GetActiveRequests([FromQuery]MoveStatusEnum moveStatus,  PaginationDto request)
         {
             var result = await _province.GetProvinceRequestsByAgent(request, true);
             return Ok(result);

@@ -2,7 +2,7 @@
 {
     public enum MoveStatusEnum
     {
-        Pending = 1,
+        NewRequest = 1,
         InProgress = 2,
         Completed = 3,  
         Cancelled = 4,

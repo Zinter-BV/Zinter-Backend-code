@@ -8,5 +8,6 @@ namespace LogisticsSolution.Application.Contract
         Task<ResponseModel<string>> CreateQuote(CreateQuoteDto request);
         Task<ResponseModel<QuoteSummaryResponseModel>> GetQuoteDetails(long id);
         Task<ResponseModel<List<QuoteSummaryResponseModel>>> GetQuotesByMoveCode(string code);
+        Task<ResponseModel<string>> AcceptAQuote(long id);
     }
 }

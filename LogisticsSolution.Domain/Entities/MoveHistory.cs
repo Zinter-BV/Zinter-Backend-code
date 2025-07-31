@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using LogisticsSolution.Domain.Enums;
+﻿using LogisticsSolution.Domain.Enums;
+using System;
 
 
 namespace LogisticsSolution.Domain.Entities
@@ -17,5 +16,9 @@ namespace LogisticsSolution.Domain.Entities
         public MoveStatusEnum MoveStatus { get; set; }
         public DateTime? CompletedOn { get; set; } = null;
         public DateTime ScheduledTime { get; set; }
+        public MoveHistory()
+        {
+             CreatedOn = DateTime.UtcNow;
+        }
     }
 }

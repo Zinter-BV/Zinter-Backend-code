@@ -6,6 +6,7 @@ using LogisticsSolution.Application.Dtos;
 using LogisticsSolution.Application.Dtos.Response;
 using LogisticsSolution.Application.Utility;
 using LogisticsSolution.Domain.Entities;
+using LogisticsSolution.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 
 namespace LogisticsSolution.Application.BusinessLogic
@@ -56,7 +57,7 @@ namespace LogisticsSolution.Application.BusinessLogic
             }
         }
 
-        public async Task<ResponseModel<Paged<PendingMoveRequestResponseModel>>> GetProvinceRequestsByAgent(PaginationDto request, bool isActive)
+        public async Task<ResponseModel<Paged<PendingMoveRequestResponseModel>>> GetProvinceRequestsByAgent(PaginationDto request, bool isActive,MoveStatusEnum? status)
         {
             try
             {
@@ -81,7 +82,7 @@ namespace LogisticsSolution.Application.BusinessLogic
 
                 List<int> ListOfProvincesCovered = movingAgent.ProvincesCovered.Select(x => x.ProvinceId).ToList();
 
-                return await GetActiveRequestByProvinceIds(ListOfProvincesCovered, request, isActive);
+                return await GetActiveRequestByProvinceIds(ListOfProvincesCovered, request, isActive, status);
 
             }
             catch (Exception ex)
@@ -91,16 +92,31 @@ namespace LogisticsSolution.Application.BusinessLogic
             }
         }
 
-        private async Task<ResponseModel<Paged<PendingMoveRequestResponseModel>>> GetActiveRequestByProvinceIds(List<int> ids, PaginationDto pagination, bool isActive)
+        private async Task<ResponseModel<Paged<PendingMoveRequestResponseModel>>> GetActiveRequestByProvinceIds(List<int> ids, PaginationDto pagination, bool isActive, MoveStatusEnum? status)
         {
             try
             {
                 List<PendingMoveRequestResponseModel> pendingMoves = new List<PendingMoveRequestResponseModel>();
 
-                var pendingRequestsQuery = isActive ? _unitOfWork.GetRepository<MoveRequest>().FindQueryableWithRelatedEntities(predicate: x => x.MoveStatus == Domain.Enums.MoveStatusEnum.NewRequest &&
-                                                                                                                                                                            ids.Contains(x.ProvinceId) && x.MoveTime < DateTime.UtcNow, x => x.Province) :
-                                                                         _unitOfWork.GetRepository<MoveRequest>().FindQueryableWithRelatedEntities(predicate: x => x.MoveStatus == Domain.Enums.MoveStatusEnum.NewRequest && 
-                                                                                                                                                                            ids.Contains(x.ProvinceId), x => x.Province);
+                var pendingRequestsQuery = _unitOfWork.GetRepository<MoveRequest>().FindQueryableWithRelatedEntities(predicate: x => x.MoveStatus == Domain.Enums.MoveStatusEnum.NewRequest &&
+                                                                                                                                                                            ids.Contains(x.ProvinceId) && x.MoveTime < DateTime.UtcNow, x => x.Province);
+
+                if (isActive && status == null)
+                {
+                    pendingRequestsQuery = _unitOfWork.GetRepository<MoveRequest>().FindQueryableWithRelatedEntities(predicate: x => x.MoveStatus == Domain.Enums.MoveStatusEnum.NewRequest && ids.Contains(x.ProvinceId) && x.MoveTime < DateTime.UtcNow, x => x.Province);
+                }
+                else if (!isActive && status == null)
+                {
+                    pendingRequestsQuery = _unitOfWork.GetRepository<MoveRequest>().FindQueryableWithRelatedEntities(predicate: x => x.MoveStatus == Domain.Enums.MoveStatusEnum.NewRequest && ids.Contains(x.ProvinceId), x => x.Province);
+                }
+                else if (isActive && status != null)
+                {
+                    pendingRequestsQuery = _unitOfWork.GetRepository<MoveRequest>().FindQueryableWithRelatedEntities(predicate: x => x.MoveStatus == status && x.MoveStatus == Domain.Enums.MoveStatusEnum.NewRequest && ids.Contains(x.ProvinceId) && x.MoveTime < DateTime.UtcNow, x => x.Province);
+                }
+                else if (!isActive && status != null)
+                {
+                    pendingRequestsQuery = _unitOfWork.GetRepository<MoveRequest>().FindQueryableWithRelatedEntities(predicate: x => x.MoveStatus == status && x.MoveStatus == Domain.Enums.MoveStatusEnum.NewRequest && ids.Contains(x.ProvinceId), x => x.Province);
+                }
 
                 var paginatedPendingRequests = Paged<PendingMoveRequestResponseModel>.PaginatedList(pendingMoves, pendingRequestsQuery.Count(), pagination.PageNumber, pagination.NumberOfRecords);
 
@@ -136,5 +152,7 @@ namespace LogisticsSolution.Application.BusinessLogic
                 return "Unable to retrieve requests".FailResponse<Paged<PendingMoveRequestResponseModel>>();
             }
         }
+
+
     }
 }

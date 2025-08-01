@@ -138,7 +138,7 @@ namespace LogisticsSolution.Application.BusinessLogic
             {
                 HttpContextContent? jwtClaims = _httpContextAccessor.GetHttpContextValues();
 
-                if (jwtClaims == null || jwtClaims.role == Domain.Enums.RoleEnum.MovingAgent)
+                if (jwtClaims == null || jwtClaims.role != Domain.Enums.RoleEnum.MovingAgent)
                 {
                     return null;
                 }
